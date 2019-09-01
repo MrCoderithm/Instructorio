@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<!--
+Ali Muhammad Created 2019-03-29
+-->
+<html>
+<head>
+    <title>Lab2</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <style>
+        #alert{
+            display: none;
+        }
+        .btn {
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+
+
+
+<div id="form" class="container">
+    <div class="row">
+        <header class="col-md-12">
+            <h2>Event Registration Form</h2>
+        </header>
+    </div>
+
+    <div id="1" class="form-group row">
+        <label for="full_name" class="col-md-4 col-form-label text-md-right">Full Name</label>
+        <div class="col-md-6">
+            <input type="text" id="full_name" class="form-control" name="full-name">
+        </div>
+    </div>
+
+    <div id="2" class="form-group row">
+        <label for="email_address" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
+        <div class="col-md-6">
+            <input type="text" id="email_address" class="form-control" name="email-address">
+        </div>
+    </div>
+
+    <div id="3" class="form-group row">
+        <label for="phone_number" class="col-md-4 col-form-label text-md-right">Phone Number</label>
+        <div class="col-md-6">
+            <input type="text" id="phone_number" class="form-control">
+        </div>
+    </div>
+
+    <div id="4" class="form-group row">
+        <label for="present_address" class="col-md-4 col-form-label text-md-right">Present Address</label>
+        <div class="col-md-6">
+            <input type="text" id="present_address" class="form-control">
+        </div>
+    </div>
+
+    <div id="5" class="form-group row">
+        <label for="permanent_address" class="col-md-4 col-form-label text-md-right">Permanent Address</label>
+        <div class="col-md-6">
+            <input type="text" id="permanent_address" class="form-control" name="permanent-address">
+        </div>
+    </div>
+
+
+    <div id="6" class="form-group row">
+        <label for="datepicker" class="col-md-4 col-form-label text-md-right">Date</label>
+        <div class="col-md-6">
+            <input type="date" id="datepicker" class="form-control" name="datepicker">
+        </div>
+    </div>
+
+    <div class="full">
+        <label for="message" class="col-md-4 col-form-label text-md-right">Message</label>
+        <div class="col-md-12">
+            <textarea id="message" name="message" class="form-control" placeholder="Enter Your Message " rows="4" required="required" data-error="Please, leave us a message."></textarea>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" id="btnRegister" class="btn btn-primary">Register</button>
+        </div>
+
+
+
+    </div>
+</div>
+
+<script>
+    $(document).ready(initApp);
+
+    function initApp() {
+        var $btnRegister = $("#btnRegister");
+
+        var $fullname = $("#full_name");
+        var $emailAddress = $("#email_address");
+        var $phoneNumber = $("#phone_number");
+        var $presentAdd = $("#present_address");
+        var $permAdd = $("#permanent_address");
+        var $date = $("#datepicker");
+
+        var db, openRequest;
+
+        var click_event = $.support.touch ? "tap" : "click";
+
+        var dbSupported=("indexedDB" in window) ? true : false;
+
+
+        if (dbSupported) {
+            var openRequest=window.indexedDB.open("registrationDB", 1);
+
+            openRequest.onupgradeneeded = function(event) {
+                db=openRequest.result;
+                if (!db.objectStoreNames.contains("registration")) {
+
+                    // ID is unique in registration
+                    db.createObjectStore("registration", {keyPath:"id"});
+                }
+
+            };
+            openRequest.onsuccess=function(event) {
+                db=openRequest.result;
+            };
+
+            openRequest.onerror=function(event) {
+                console.dir(event);
+            };
+
+        }
+
+
+        $btnRegister.click(function () {
+            var presentAdd=$presentAdd.val();
+            var permAdd=$permAdd.val();
+            var date=$date.val();
+            var fullname=$fullname.val();
+            var email=$emailAddress.val();
+            var phoneNumber=$phoneNumber.val();
+
+
+
+            // Notice: we use here email as DB key!
+            var registration={id:fullname,email:email, number:phoneNumber,date:date, address : permAdd};
+
+            // Initiate a transaction
+            var transaction = db.transaction(["registration"],"readwrite");
+
+            // Add/Update registration info. Notice the difference: .add() vs .put()  !!!
+            transaction.objectStore("registration").put(registration);
+
+
+        });
+
+
+
+
+    }
+</script>
+</body>
+</html>

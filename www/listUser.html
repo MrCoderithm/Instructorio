@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<header>
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,600,700" rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css" />
+
+</header>
+<body>
+
+<div class="navbar">
+    <a class="active" href="index.html"><i class="fa fa-fw fa-home"></i> Home</a>
+    <a href="index.html" onclick="logout()"><i class="fa fa-fw fa-search"></i>Logout</a>
+    <a href="index.html"><i class="fa fa-fw fa-envelope"></i>Contact Form</a>
+</div>
+
+
+
+<h2>All Students Registered</h2>
+
+<select class="dropbtn" id="myselect" onchange="change_myselect(this.value)">
+    <option value="">Choose an option:</option>
+    <option value="newCustomers">New Students</option>
+    <option value="currentCustomers">Current Students</option>
+    <option value="previousCustomers">Previous Students</option>
+</select>
+
+<p id="demo"></p>
+
+<button class="button" style="vertical-align:middle" onclick="refresh()"><span>Refresh</span></button>
+
+<script>
+    function refresh() {
+        var e = document.getElementById("myselect");
+        var s = e.options[e.selectedIndex].value;
+
+        change_myselect(s);
+    }
+
+    function accept(uid) {
+
+        //needs to check if the status is null to make sure the option is still available
+        //var user = firebase.auth().currentUser;
+        var usersRef = firebase.database().ref("users");
+        console.log(firebase.auth().currentUser.email);
+        usersRef.child(uid).update({
+            status : firebase.auth().currentUser.email
+        });
+        refresh();
+    }
+
+    function complete(uid) {
+        //var user = firebase.auth().currentUser;
+        var usersRef = firebase.database().ref("users");
+
+        usersRef.child(uid).update({
+            complete : firebase.auth().currentUser.email
+        });
+        refresh();
+    }
+
+    function deleteUser(uid) {
+        var usersRef = firebase.database().ref("users");
+
+        usersRef.child(uid).update({
+            complete : true
+        });
+        refresh();
+    }
+
+    function change_myselect(sel) {
+        console.log("Called change selection");
+        var obj, dbParam, xmlhttp, myObj, x, txt = "";
+        obj = { table: sel, limit: 20 };
+        console.log(sel);
+        dbParam = JSON.stringify(obj);
+        xmlhttp = new XMLHttpRequest();
+        xmlhttp.onreadystatechange = function() {
+
+            //runs only for current customers by checking if status is null
+            if (this.readyState == 4 && this.status == 200) {
+                myObj = JSON.parse(this.responseText);
+                txt = "";
+                txt += "<table border='1'><tr><td>Customer Name</td><td>Address</td><td>Date</td><td>Custom Message</td><td>Action</td></tr>";
+                //only show customers that are available
+
+                if(sel == "newCustomers"){
+                    for (x in myObj) {
+                        for (i=1;i<myObj.users.length;i++){
+                            if(myObj.users[i].status == "Null"){
+                                console.log("inside " + i);
+                                txt += "<tr><td>" + myObj.users[i].name + "</td><td>"+ myObj.users[i].address+"</td><td>" + myObj.users[i].date + "</td><td>" + myObj.users[i].message + "</td><td><button onclick='accept("+ myObj.users[i].id+ ")'>Accept</button> </td></tr>";
+                            }
+
+                        }
+                        break;
+                    }
+                }else if(sel == "currentCustomers"){//only shows customers with the status = to the instructors id and complete is false
+                    for (x in myObj) {
+                        for (i=1;i<myObj.users.length;i++){
+                            if(myObj.users[i].status == firebase.auth().currentUser.email && myObj.users[i].complete == false){
+                                txt += "<tr><td>" + myObj.users[i].name + "</td><td>"+ myObj.users[i].address+"</td><td>" + myObj.users[i].date + "</td><td>" + myObj.users[i].message + "</td><td><button onclick='complete("+ myObj.users[i].id+ ")'>Complete</button> </td></tr>";
+                            }
+                        }
+                        break;
+                    }
+                }else if(sel == "previousCustomers"){
+                    for (x in myObj) {
+                        for (i=1;i<myObj.users.length;i++){
+                            if(myObj.users[i].status == firebase.auth().currentUser.email && myObj.users[i].complete == firebase.auth().currentUser.email){
+                                txt += "<tr><td>" + myObj.users[i].name + "</td><td>"+ myObj.users[i].address+"</td><td>" + myObj.users[i].date + "</td><td>" + myObj.users[i].message + "</td><td><button onclick='deleteUser("+ myObj.users[i].id+ ")'>Delete</button> </td></tr>";
+                            }
+                        }
+                        break;
+                    }
+                }
+
+                txt += "</table>"
+
+            }
+            document.getElementById("demo").innerHTML = txt;
+        };
+        xmlhttp.open("GET", "https://login-d4ace.firebaseio.com/.json", true);
+        xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xmlhttp.send("x=" + dbParam);
+    }
+
+    function logout(){
+        firebase.auth().signOut();
+    }
+</script>
+
+
+<script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config =  {
+        apiKey: "AIzaSyAt7qKO59DPMOgvrKhDHWY2zl-3QPoQpCw",
+        authDomain: "login-d4ace.firebaseapp.com",
+        databaseURL: "https://login-d4ace.firebaseio.com",
+        projectId: "login-d4ace",
+        storageBucket: "login-d4ace.appspot.com",
+        messagingSenderId: "3244395321"
+    };
+    firebase.initializeApp(config);
+
+
+
+
+</script>
+<script src="js/index.js"></script>
+
+</body>
+</html>

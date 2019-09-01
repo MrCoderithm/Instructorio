@@ -1,0 +1,67 @@
+<html>
+<head>
+    <title>Firebase Login</title>
+    <link rel="stylesheet" href="css/index.css" />
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.css" />
+
+</head>
+<body>
+
+
+<div class="topnav" id="myTopnav">
+    <a class="active" href="index.html"><i class="fa fa-fw fa-home"></i> Home</a>
+    <a href="map.html"><i class="fa fa-fw fa-search"></i>Map</a>
+    <a href="index.html"><i class="fa fa-fw fa-envelope"></i>Contact Form</a>
+    <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+        <i class="fa fa-bars"></i>
+    </a>
+</div>
+
+<div id="login_div" class="main-div">
+    <h3>Instructor Login</h3>
+    <input type="email" placeholder="Email..." id="email_field" />
+    <input type="password" placeholder="Password..." id="password_field" />
+
+    <button  onclick="login()">Login to Account</button>
+    <button  onclick="createaccount()">Create Account</button>
+
+</div>
+
+<div id="user_div" class="loggedin-div">
+    <h3>Welcome User</h3>
+    <p id="user_para">Welcome to Firebase web login Example. You're currently logged in.</p>
+    <button onclick="logout()">Logout</button>
+    <button id="verify_btn" onclick="sendVerification()">Send Verification</button>
+
+    <button> Group Page </button>
+
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/5.9.3/firebase.js"></script>
+<script>
+    // Initialize Firebase
+    var config =  {
+        apiKey: "AIzaSyAt7qKO59DPMOgvrKhDHWY2zl-3QPoQpCw",
+        authDomain: "login-d4ace.firebaseapp.com",
+        databaseURL: "https://login-d4ace.firebaseio.com",
+        projectId: "login-d4ace",
+        storageBucket: "login-d4ace.appspot.com",
+        messagingSenderId: "3244395321"
+    };
+    firebase.initializeApp(config);
+</script>
+<script src="js/index1.js"></script>
+
+</body>
+</html>
